@@ -1,7 +1,7 @@
 [![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&size=40&pause=1000&color=76F7EF&width=435&height=70&lines=%F0%9F%AB%B5++%F0%9F%A4%B2++%F0%9F%A7%A0)](https://git.io/typing-svg)
 [![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&size=45&pause=1000&color=76F7EF&width=1000&height=100&lines=Welcome+to+UUKDO's+Github....%F0%9F%95%B7%EF%B8%8F%F0%9F%92%A7%F0%9F%95%B8%EF%B8%8F)](https://git.io/typing-svg)
 ---
-<br>
+
 
 ### University of Seoul, majoring in Computer Science <br><small> (Formerly Business Administration) </small>
 <br>
