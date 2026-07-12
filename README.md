@@ -3,7 +3,7 @@
 ---
 <br>
 
-> ### University of Seoul, majoring in Computer Science <br><small> (Formerly Business Administration) </small>
+### University of Seoul, majoring in Computer Science <br><small> (Formerly Business Administration) </small>
 <br>
 
 ![](https://i.pinimg.com/236x/eb/6f/da/eb6fdaa25503213e3249481f868f021d.jpg)  
