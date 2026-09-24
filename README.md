@@ -28,7 +28,4 @@
 ![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
 ![JWT](https://img.shields.io/badge/JWT-000000?style=for-the-badge&logo=jsonwebtokens&logoColor=white)
 
-<br>
-![Anurag's GitHub stats](https://github-readme-stats.vercel.app/api?username=uukdo&show_icons=true&theme=radical)
-
 
