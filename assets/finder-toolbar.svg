@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 126" role="img" aria-labelledby="title desc">
-  <title id="title">UUKDO Finder window header with language battery</title>
-  <desc id="desc">A compact macOS Finder-inspired toolbar with a wide horizontal language battery, small language details, and a focused search field reading Welcome to UUKDO.</desc>
+  <title id="title">UUKDO Finder window header with live language battery</title>
+  <desc id="desc">Language usage across 2 owned non-fork repositories. JavaScript 53.44%, CSS 19.50%, Python 15.88%, Other 11.18%.</desc>
   <style>
     :root {
       --chrome: #f2f2f4;
@@ -47,28 +47,26 @@
   <circle cx="76" cy="27" r="8" fill="#28c840" />
   <text x="500" y="34" text-anchor="middle" font-size="17" font-weight="600">UUKDO</text>
 
-  <!-- Horizontal language battery -->
   <rect x="24" y="70" width="210" height="34" rx="9" fill="var(--track)" stroke="var(--muted)" stroke-width="4" />
   <rect x="238" y="79" width="11" height="16" rx="3" fill="var(--muted)" />
   <g clip-path="url(#toolbar-battery-clip)">
-    <rect x="31" y="77" width="124.50" height="20" fill="#f1e05a" />
-    <rect x="155.50" y="77" width="45.45" height="20" fill="#563d7c" />
-    <rect x="200.95" y="77" width="19.74" height="20" fill="#e34c26" />
-    <rect x="220.69" y="77" width="6.31" height="20" fill="#336790" />
+    <rect x="31.00" y="77" width="104.73" height="20" fill="#F1E05A" />
+    <rect x="135.73" y="77" width="38.23" height="20" fill="#663399" />
+    <rect x="173.96" y="77" width="31.12" height="20" fill="#3572A5" />
+    <rect x="205.09" y="77" width="21.91" height="20" fill="#8B949E" />
     <rect x="31" y="77" width="196" height="20" fill="url(#toolbar-shine)" />
   </g>
 
-  <!-- Compact language status -->
-  <rect x="270" y="70" width="10" height="10" rx="2" fill="#f1e05a" />
-  <text class="detail" x="286" y="79">JavaScript 63.52%</text>
-  <rect x="466" y="70" width="10" height="10" rx="2" fill="#563d7c" />
-  <text class="detail" x="482" y="79">CSS 23.19%</text>
-  <rect x="270" y="94" width="10" height="10" rx="2" fill="#e34c26" />
-  <text class="detail" x="286" y="103">HTML 10.07%</text>
-  <rect x="466" y="94" width="10" height="10" rx="2" fill="#336790" />
-  <text class="detail" x="482" y="103">PLpgSQL 3.23%</text>
+  <!-- Generated language status -->
+  <rect x="270" y="70" width="10" height="10" rx="2" fill="#F1E05A" />
+  <text class="detail" x="286" y="79">JavaScript 53.44%</text>
+  <rect x="466" y="70" width="10" height="10" rx="2" fill="#663399" />
+  <text class="detail" x="482" y="79">CSS 19.50%</text>
+  <rect x="270" y="94" width="10" height="10" rx="2" fill="#3572A5" />
+  <text class="detail" x="286" y="103">Python 15.88%</text>
+  <rect x="466" y="94" width="10" height="10" rx="2" fill="#8B949E" />
+  <text class="detail" x="482" y="103">Other 11.18%</text>
 
-  <!-- Focused search field -->
   <rect x="746" y="70" width="232" height="34" rx="10" fill="var(--input)" stroke="var(--accent)" stroke-width="2" />
   <circle cx="765" cy="86" r="6" fill="none" stroke="var(--text)" stroke-width="2" />
   <path d="m770 91 5 5" fill="none" stroke="var(--text)" stroke-width="2" stroke-linecap="round" />
