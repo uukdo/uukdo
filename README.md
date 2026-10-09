@@ -1,31 +1,42 @@
-[![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&size=40&pause=1000&color=76F7EF&width=435&height=70&lines=%F0%9F%AB%B5++%F0%9F%A4%B2++%F0%9F%A7%A0)](https://git.io/typing-svg)
-[![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&size=45&pause=1000&color=76F7EF&width=1000&height=100&lines=Welcome+to+UUKDO's+Github....%F0%9F%95%B7%EF%B8%8F%F0%9F%92%A7%F0%9F%95%B8%EF%B8%8F)](https://git.io/typing-svg)
----
+<p align="center">
+  <img src="./assets/finder-toolbar.svg" alt="Finder-style toolbar with a language battery and Welcome to UUKDO search field" width="100%" />
+</p>
 
-
-### University of Seoul, majoring in Computer Science <br><small> (Formerly Business Administration) </small>
-<br>
-
-![](https://i.pinimg.com/236x/eb/6f/da/eb6fdaa25503213e3249481f868f021d.jpg)  
-
-<br>  
-
-### Based in Daegu 😍 🚅 Seoul 
-![KTX](https://img.shields.io/badge/KTX_VIP-00529B?style=for-the-badge&logo=train&logoColor=white)
-![DaeguVIP](https://img.shields.io/badge/DAEGU_VIP-0051B?style=for-the-badge&logo=train&logoColor=white)
-![SeoulStation](https://img.shields.io/badge/SEOUL_STATION-0F19FA?style=for-the-badge&logo=train&logoColor=white)
-
-<br>
-
-
-### Concentrating on... 📚 🌱 🤫 🍀 ⌨️ ✏️
-![Java](https://img.shields.io/badge/Java-007396?style=for-the-badge&logo=openjdk&logoColor=white)
-![C](https://img.shields.io/badge/C-A8B9CC?style=for-the-badge&logo=c&logoColor=white)
-![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
-![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)
-![Flutter](https://img.shields.io/badge/Flutter-02569B?style=for-the-badge&logo=flutter&logoColor=white)
-![React](https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=react&logoColor=black)
-![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
-![JWT](https://img.shields.io/badge/JWT-000000?style=for-the-badge&logo=jsonwebtokens&logoColor=white)
-
-
+<table width="100%">
+  <tr>
+    <td width="33.33%" valign="top" align="center">
+      <img src="./assets/spider-folder.png" alt="Education folder" width="100" /><br />
+      <strong>Education</strong><br /><br />
+      <small>
+        <strong>University of Seoul</strong><br />
+        Computer Science<br />
+        Formerly Business Administration
+      </small>
+      <br /><br />
+      <img src="https://i.pinimg.com/236x/eb/6f/da/eb6fdaa25503213e3249481f868f021d.jpg" alt="Pingu character" width="110" />
+    </td>
+    <td width="33.33%" valign="top" align="center">
+      <img src="./assets/spider-folder.png" alt="Location folder" width="100" /><br />
+      <strong>Location</strong><br /><br />
+      <small><strong>Daegu 😍 · Seoul</strong></small>
+      <br /><br />
+      <img src="https://img.shields.io/badge/KTX_VIP-00529B?style=flat-square&amp;logo=train&amp;logoColor=white" alt="KTX VIP" height="20" />
+      <img src="https://img.shields.io/badge/DAEGU_VIP-0051B?style=flat-square&amp;logo=train&amp;logoColor=white" alt="Daegu VIP" height="20" />
+      <img src="https://img.shields.io/badge/SEOUL_STATION-0F19FA?style=flat-square&amp;logo=train&amp;logoColor=white" alt="Seoul Station" height="20" />
+    </td>
+    <td width="33.34%" valign="top" align="center">
+      <img src="./assets/spider-folder.png" alt="Tech Stack folder" width="100" /><br />
+      <strong>Tech Stack</strong><br /><br />
+      📚 🌱 🤫 🍀 ⌨️ ✏️
+      <br /><br />
+      <img src="https://img.shields.io/badge/Java-007396?style=flat-square&amp;logo=openjdk&amp;logoColor=white" alt="Java" height="20" />
+      <img src="https://img.shields.io/badge/C-A8B9CC?style=flat-square&amp;logo=c&amp;logoColor=white" alt="C" height="20" />
+      <img src="https://img.shields.io/badge/Python-3776AB?style=flat-square&amp;logo=python&amp;logoColor=white" alt="Python" height="20" />
+      <img src="https://img.shields.io/badge/FastAPI-009688?style=flat-square&amp;logo=fastapi&amp;logoColor=white" alt="FastAPI" height="20" />
+      <img src="https://img.shields.io/badge/Flutter-02569B?style=flat-square&amp;logo=flutter&amp;logoColor=white" alt="Flutter" height="20" />
+      <img src="https://img.shields.io/badge/React-61DAFB?style=flat-square&amp;logo=react&amp;logoColor=black" alt="React" height="20" />
+      <img src="https://img.shields.io/badge/Docker-2496ED?style=flat-square&amp;logo=docker&amp;logoColor=white" alt="Docker" height="20" />
+      <img src="https://img.shields.io/badge/JWT-000000?style=flat-square&amp;logo=jsonwebtokens&amp;logoColor=white" alt="JWT" height="20" />
+    </td>
+  </tr>
+</table>
