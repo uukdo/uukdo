@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./assets/finder-toolbar.svg" alt="Finder-style toolbar with a language battery and Welcome to UUKDO search field" width="100%" />
+  <img src="./assets/finder-toolbar.svg?v=2" alt="Finder-style toolbar with a language battery and Welcome to UUKDO search field" width="100%" />
 </p>
 
 <table width="100%">
