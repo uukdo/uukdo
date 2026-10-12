@@ -3,11 +3,12 @@ name: Update language battery
 on:
   workflow_dispatch:
   schedule:
-    - cron: "23 */3 * * *"
+    - cron: "23 2 * * *"
   push:
     branches: [main]
     paths:
       - "scripts/update_language_stats.py"
+      - "tests/test_update_language_stats.py"
       - ".github/workflows/update-language-stats.yml"
 
 permissions:
@@ -25,12 +26,16 @@ jobs:
       - name: Check out profile repository
         uses: actions/checkout@v4
 
+      - name: Test language statistics
+        run: python3 -m unittest discover -s tests -v
+
       - name: Generate language battery
         env:
           GITHUB_REPOSITORY_OWNER: ${{ github.repository_owner }}
           PROFILE_DISPLAY_NAME: UUKDO
-          STATS_TOKEN: ${{ secrets.GH_STATS_TOKEN || github.token }}
-          INCLUDE_PRIVATE: ${{ secrets.GH_STATS_TOKEN != '' }}
+          # PAT must have Contents: read access to every repository to include.
+          STATS_TOKEN: ${{ secrets.GH_STATS_TOKEN }}
+          COMMIT_WINDOW_DAYS: "365"
         run: python3 scripts/update_language_stats.py
 
       - name: Commit updated graphic

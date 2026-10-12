@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Regenerate the Finder toolbar from languages used in owned GitHub repos."""
+"""Regenerate the Finder toolbar from code changed in a user's commits."""
 
 from __future__ import annotations
 
@@ -11,6 +11,7 @@ import urllib.error
 import urllib.parse
 import urllib.request
 from collections import Counter
+from datetime import date, datetime, timedelta, timezone
 from html import escape
 from pathlib import Path
 
@@ -47,11 +48,85 @@ LANGUAGE_COLORS = {
     "Rust": "#DEA584",
     "SCSS": "#C6538C",
     "Shell": "#89E051",
+    "SQL": "#E38C00",
     "Solidity": "#AA6746",
     "Swift": "#F05138",
     "TypeScript": "#3178C6",
     "Vue": "#41B883",
 }
+
+# This deliberately covers source-code formats rather than every extension in
+# Linguist. Data, docs, images, lockfiles and generated project metadata should
+# not outweigh the code a person actually changed.
+EXTENSION_LANGUAGES = {
+    ".asm": "Assembly",
+    ".astro": "Astro",
+    ".bash": "Shell",
+    ".c": "C",
+    ".cc": "C++",
+    ".clj": "Clojure",
+    ".cljs": "Clojure",
+    ".cmake": "CMake",
+    ".cpp": "C++",
+    ".cs": "C#",
+    ".css": "CSS",
+    ".cxx": "C++",
+    ".dart": "Dart",
+    ".ex": "Elixir",
+    ".exs": "Elixir",
+    ".fs": "F#",
+    ".fsx": "F#",
+    ".go": "Go",
+    ".gradle": "Groovy",
+    ".graphql": "GraphQL",
+    ".gql": "GraphQL",
+    ".h": "C",
+    ".hcl": "HCL",
+    ".hh": "C++",
+    ".hpp": "C++",
+    ".html": "HTML",
+    ".htm": "HTML",
+    ".java": "Java",
+    ".js": "JavaScript",
+    ".jsx": "JavaScript",
+    ".kt": "Kotlin",
+    ".kts": "Kotlin",
+    ".lua": "Lua",
+    ".m": "Objective-C",
+    ".mm": "Objective-C",
+    ".mjs": "JavaScript",
+    ".php": "PHP",
+    ".pl": "Perl",
+    ".proto": "Protocol Buffer",
+    ".ps1": "PowerShell",
+    ".py": "Python",
+    ".r": "R",
+    ".rb": "Ruby",
+    ".rs": "Rust",
+    ".sass": "Sass",
+    ".scala": "Scala",
+    ".scss": "SCSS",
+    ".sh": "Shell",
+    ".sol": "Solidity",
+    ".sql": "SQL",
+    ".svelte": "Svelte",
+    ".swift": "Swift",
+    ".tf": "HCL",
+    ".tsx": "TypeScript",
+    ".ts": "TypeScript",
+    ".vue": "Vue",
+    ".zig": "Zig",
+}
+
+FILENAME_LANGUAGES = {
+    "cmakelists.txt": "CMake",
+    "dockerfile": "Dockerfile",
+    "gemfile": "Ruby",
+    "makefile": "Makefile",
+    "rakefile": "Ruby",
+}
+
+GENERATED_SUFFIXES = (".min.css", ".min.js", ".map")
 
 
 def api_get(url: str, token: str) -> tuple[object, dict[str, str]]:
@@ -83,64 +158,158 @@ def api_get(url: str, token: str) -> tuple[object, dict[str, str]]:
     raise RuntimeError("GitHub API request failed")
 
 
-def paginated_repositories(username: str, token: str, include_private: bool) -> list[dict]:
-    repositories: list[dict] = []
-    page = 1
-    while True:
-        if include_private:
-            query = urllib.parse.urlencode(
-                {
-                    "affiliation": "owner",
-                    "visibility": "all",
-                    "sort": "full_name",
-                    "per_page": 100,
-                    "page": page,
-                }
-            )
-            url = f"{API_ROOT}/user/repos?{query}"
-        else:
-            query = urllib.parse.urlencode(
-                {"type": "owner", "sort": "full_name", "per_page": 100, "page": page}
-            )
-            url = f"{API_ROOT}/users/{urllib.parse.quote(username)}/repos?{query}"
+def language_for_path(filename: str) -> str | None:
+    """Return the source language for a changed path, or None for non-code."""
 
+    normalized = filename.replace("\\", "/").casefold()
+    basename = normalized.rsplit("/", 1)[-1]
+    if basename.endswith(GENERATED_SUFFIXES):
+        return None
+    if basename in FILENAME_LANGUAGES:
+        return FILENAME_LANGUAGES[basename]
+    if basename.endswith(".d.ts") or basename.endswith(".d.tsx"):
+        return "TypeScript"
+    if basename.endswith(".ipynb"):
+        return "Jupyter Notebook"
+    suffix = Path(basename).suffix
+    return EXTENSION_LANGUAGES.get(suffix)
+
+
+def _search_commit_range(
+    username: str, token: str, start: date, end: date
+) -> list[dict]:
+    """Search one inclusive date range, splitting it at GitHub's 1,000 cap."""
+
+    query = f"author:{username} author-date:{start.isoformat()}..{end.isoformat()}"
+    params = {
+        "q": query,
+        "sort": "author-date",
+        "order": "asc",
+        "per_page": 100,
+        "page": 1,
+    }
+    url = f"{API_ROOT}/search/commits?{urllib.parse.urlencode(params)}"
+    payload, _ = api_get(url, token)
+    if not isinstance(payload, dict) or not isinstance(payload.get("items"), list):
+        raise RuntimeError("Unexpected commit search response from GitHub")
+    if payload.get("incomplete_results"):
+        raise RuntimeError("GitHub returned incomplete commit search results; try again later")
+
+    total_count = int(payload.get("total_count", 0))
+    if total_count > 1000:
+        if start >= end:
+            raise RuntimeError(
+                f"More than 1,000 commits were found on {start.isoformat()}; "
+                "use a shorter COMMIT_WINDOW_DAYS"
+            )
+        midpoint = start + (end - start) // 2
+        return _search_commit_range(username, token, start, midpoint) + _search_commit_range(
+            username, token, midpoint + timedelta(days=1), end
+        )
+
+    commits = list(payload["items"])
+    pages = (total_count + 99) // 100
+    for page in range(2, pages + 1):
+        params["page"] = page
+        page_url = f"{API_ROOT}/search/commits?{urllib.parse.urlencode(params)}"
+        page_payload, _ = api_get(page_url, token)
+        if not isinstance(page_payload, dict) or not isinstance(page_payload.get("items"), list):
+            raise RuntimeError("Unexpected paginated commit search response from GitHub")
+        if page_payload.get("incomplete_results"):
+            raise RuntimeError("GitHub returned incomplete commit search results; try again later")
+        commits.extend(page_payload["items"])
+    return commits
+
+
+def search_authored_commits(
+    username: str, token: str, window_days: int, today: date | None = None
+) -> list[dict]:
+    """Find recent commits attributed to a GitHub user and remove duplicates."""
+
+    end = today or datetime.now(timezone.utc).date()
+    start = end - timedelta(days=window_days - 1)
+    results = _search_commit_range(username, token, start, end)
+    commits_by_sha: dict[str, dict] = {}
+    for commit in results:
+        sha = commit.get("sha")
+        if not isinstance(sha, str) or not sha:
+            continue
+        # The same commit may be searchable through both an upstream repository
+        # and a fork. Its SHA identifies the change, so count it only once.
+        commits_by_sha.setdefault(sha, commit)
+    return list(commits_by_sha.values())
+
+
+def _commit_files(commit_url: str, token: str) -> list[dict]:
+    """Fetch every changed file for a commit (GitHub paginates after 100)."""
+
+    files: list[dict] = []
+    for page in range(1, 31):
+        separator = "&" if "?" in commit_url else "?"
+        url = f"{commit_url}{separator}{urllib.parse.urlencode({'per_page': 100, 'page': page})}"
         payload, _ = api_get(url, token)
-        if not isinstance(payload, list):
-            raise RuntimeError("Unexpected repository response from GitHub")
-        repositories.extend(payload)
-        if len(payload) < 100:
-            break
-        page += 1
-
-    username_folded = username.casefold()
-    return [
-        repo
-        for repo in repositories
-        if repo.get("owner", {}).get("login", "").casefold() == username_folded
-        and not repo.get("fork", False)
-    ]
+        if not isinstance(payload, dict) or not isinstance(payload.get("files"), list):
+            raise RuntimeError("Unexpected commit detail response from GitHub")
+        page_files = payload["files"]
+        files.extend(page_files)
+        if len(page_files) < 100:
+            return files
+    raise RuntimeError("A commit changed more than GitHub's 3,000-file API limit")
 
 
-def collect_languages(username: str, token: str, include_private: bool) -> tuple[Counter, int]:
+def collect_languages(
+    username: str, token: str, window_days: int
+) -> tuple[Counter[str], int, int, int]:
+    """Count changed source lines in the user's recent non-merge commits."""
+
     totals: Counter[str] = Counter()
-    repositories = paginated_repositories(username, token, include_private)
-    for repo in repositories:
-        languages_url = repo.get("languages_url")
-        if not languages_url:
+    repositories: set[str] = set()
+    code_commit_count = 0
+    commits = search_authored_commits(username, token, window_days)
+
+    for commit in commits:
+        parents = commit.get("parents", [])
+        if isinstance(parents, list) and len(parents) > 1:
             continue
-        payload, _ = api_get(languages_url, token)
-        if not isinstance(payload, dict):
+        commit_url = commit.get("url")
+        if not isinstance(commit_url, str) or not commit_url.startswith(f"{API_ROOT}/repos/"):
             continue
-        for language, byte_count in payload.items():
-            if isinstance(byte_count, int) and byte_count > 0:
-                totals[str(language)] += byte_count
-    return totals, len(repositories)
+
+        commit_totals: Counter[str] = Counter()
+        for changed_file in _commit_files(commit_url, token):
+            filename = changed_file.get("filename")
+            if not isinstance(filename, str):
+                continue
+            language = language_for_path(filename)
+            if language is None:
+                continue
+            changes = changed_file.get("changes")
+            if not isinstance(changes, int):
+                additions = changed_file.get("additions", 0)
+                deletions = changed_file.get("deletions", 0)
+                changes = (
+                    (additions if isinstance(additions, int) else 0)
+                    + (deletions if isinstance(deletions, int) else 0)
+                )
+            if changes > 0:
+                commit_totals[language] += changes
+
+        if not commit_totals:
+            continue
+        totals.update(commit_totals)
+        code_commit_count += 1
+        repository = commit.get("repository", {})
+        full_name = repository.get("full_name") if isinstance(repository, dict) else None
+        if isinstance(full_name, str) and full_name:
+            repositories.add(full_name.casefold())
+
+    return totals, code_commit_count, len(repositories), sum(totals.values())
 
 
 def summarized_languages(totals: Counter[str]) -> list[dict[str, object]]:
     grand_total = sum(totals.values())
     if grand_total <= 0:
-        raise RuntimeError("No language data was found in the selected repositories")
+        raise RuntimeError("No source-code changes were found in the selected commit window")
 
     ordered = totals.most_common()
     if len(ordered) <= 4:
@@ -150,19 +319,26 @@ def summarized_languages(totals: Counter[str]) -> list[dict[str, object]]:
         groups = visible + [("Other", sum(value for _, value in ordered[3:]))]
 
     result = []
-    for language, byte_count in groups:
+    for language, change_count in groups:
         result.append(
             {
                 "name": language,
-                "bytes": byte_count,
-                "percent": byte_count / grand_total * 100,
+                "changes": change_count,
+                "percent": change_count / grand_total * 100,
                 "color": "#8B949E" if language == "Other" else LANGUAGE_COLORS.get(language, "#8B949E"),
             }
         )
     return result
 
 
-def render_svg(display_name: str, languages: list[dict[str, object]], repository_count: int) -> str:
+def render_svg(
+    display_name: str,
+    languages: list[dict[str, object]],
+    commit_count: int,
+    repository_count: int,
+    changed_lines: int,
+    window_days: int,
+) -> str:
     inner_x = 31.0
     inner_width = 196.0
     segments = []
@@ -192,8 +368,13 @@ def render_svg(display_name: str, languages: list[dict[str, object]], repository
     )
     safe_display_name = escape(display_name)
     safe_desc = escape(
-        f"Language usage across {repository_count} owned non-fork repositories. "
-        f"{summary}."
+        f"Language usage from {changed_lines:,} changed source lines in {commit_count} "
+        f"non-merge commits across {repository_count} repositories during the last "
+        f"{window_days} days. {summary}."
+    )
+    safe_meta = escape(
+        f"{changed_lines:,} changed lines · {commit_count} commits · "
+        f"{repository_count} repos · {window_days}d"
     )
 
     return f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 126" role="img" aria-labelledby="title desc">
@@ -224,6 +405,7 @@ def render_svg(display_name: str, languages: list[dict[str, object]], repository
     }}
     text {{ font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", sans-serif; fill: var(--text); }}
     .detail {{ font-size: 12px; fill: var(--muted); }}
+    .meta {{ font-size: 10px; fill: var(--muted); }}
   </style>
 
   <defs>
@@ -254,6 +436,7 @@ def render_svg(display_name: str, languages: list[dict[str, object]], repository
 
   <!-- Generated language status -->
 {chr(10).join(legend)}
+  <text class="meta" x="270" y="119">{safe_meta}</text>
 
   <rect x="746" y="70" width="232" height="34" rx="10" fill="var(--input)" stroke="var(--accent)" stroke-width="2" />
   <circle cx="765" cy="86" r="6" fill="none" stroke="var(--text)" stroke-width="2" />
@@ -270,23 +453,42 @@ def main() -> int:
     username = os.getenv("GITHUB_REPOSITORY_OWNER", "UUKDO").strip()
     display_name = os.getenv("PROFILE_DISPLAY_NAME", "UUKDO").strip()
     token = os.getenv("STATS_TOKEN", os.getenv("GITHUB_TOKEN", "")).strip()
-    include_private = os.getenv("INCLUDE_PRIVATE", "false").casefold() in {"1", "true", "yes"}
+    window_days_raw = os.getenv("COMMIT_WINDOW_DAYS", "365").strip()
 
     if not username:
         print("GITHUB_REPOSITORY_OWNER is empty", file=sys.stderr)
         return 1
-    if include_private and not token:
-        print("INCLUDE_PRIVATE requires STATS_TOKEN", file=sys.stderr)
+    if not token:
+        print("STATS_TOKEN is required to inspect commits across repositories", file=sys.stderr)
+        return 1
+    try:
+        window_days = int(window_days_raw)
+    except ValueError:
+        print("COMMIT_WINDOW_DAYS must be an integer", file=sys.stderr)
+        return 1
+    if not 1 <= window_days <= 3660:
+        print("COMMIT_WINDOW_DAYS must be between 1 and 3660", file=sys.stderr)
         return 1
 
-    totals, repository_count = collect_languages(username, token, include_private)
+    totals, commit_count, repository_count, changed_lines = collect_languages(
+        username, token, window_days
+    )
     languages = summarized_languages(totals)
-    svg = render_svg(display_name, languages, repository_count)
+    svg = render_svg(
+        display_name,
+        languages,
+        commit_count,
+        repository_count,
+        changed_lines,
+        window_days,
+    )
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
     OUTPUT_PATH.write_text(svg, encoding="utf-8")
 
-    scope = "public and accessible private" if include_private else "public"
-    print(f"Updated {OUTPUT_PATH} from {repository_count} {scope} repositories")
+    print(
+        f"Updated {OUTPUT_PATH} from {changed_lines:,} changed lines in "
+        f"{commit_count} commits across {repository_count} repositories"
+    )
     return 0
 
 
