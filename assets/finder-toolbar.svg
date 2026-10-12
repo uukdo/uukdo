@@ -1,6 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 126" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 1100 169"
+  role="img"
+  aria-labelledby="title desc">
+
   <title id="title">UUKDO Finder window header with live language battery</title>
-  <desc id="desc">Language usage from 40,139 changed source lines in 56 non-merge commits across 7 repositories during the last 365 days. TypeScript 30.69%, CSS 23.29%, Dart 20.04%, Other 25.98%.</desc>
+  <desc id="desc">Language usage from 40,139 changed source lines in 56 non-merge commits across 7 repositories during the last 365 days. TypeScript 30.69%, CSS 23.29%, Dart 20.04%, Python 14.36%, JavaScript 6.29%, Other 5.33%.</desc>
+
   <style>
     :root {
       --chrome: #f2f2f4;
@@ -12,6 +17,7 @@
       --muted: #6e6e73;
       --accent: #0969da;
     }
+
     @media (prefers-color-scheme: dark) {
       :root {
         --chrome: #2b2b2d;
@@ -24,56 +30,197 @@
         --accent: #76f7ef;
       }
     }
-    text { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", sans-serif; fill: var(--text); }
-    .detail { font-size: 12px; fill: var(--muted); }
-    .meta { font-size: 10px; fill: var(--muted); }
+
+    text {
+      font-family: -apple-system, BlinkMacSystemFont,
+        "SF Pro Display", "Segoe UI", sans-serif;
+      fill: var(--text);
+    }
+
+    .detail {
+      font-size: 12px;
+      fill: var(--muted);
+    }
+
+    .meta {
+      font-size: 10px;
+      fill: var(--muted);
+    }
   </style>
 
   <defs>
     <clipPath id="toolbar-battery-clip">
-      <rect x="31" y="77" width="196" height="20" rx="5" />
+      <rect
+        x="31"
+        y="77"
+        width="266"
+        height="20"
+        rx="5"
+      />
     </clipPath>
-    <linearGradient id="toolbar-shine" x1="0" y1="0" x2="0" y2="1">
+
+    <linearGradient id="toolbar-shine"
+      x1="0" y1="0" x2="0" y2="1">
       <stop offset="0" stop-color="#ffffff" stop-opacity=".28" />
       <stop offset=".48" stop-color="#ffffff" stop-opacity="0" />
     </linearGradient>
+
+    <clipPath id="finder-search-clip">
+      <rect
+        x="882"
+        y="73"
+        width="174"
+        height="28"
+      />
+    </clipPath>
   </defs>
 
-  <path d="M18 0h964a18 18 0 0 1 18 18v108H0V18A18 18 0 0 1 18 0z" fill="var(--chrome)" />
-  <path d="M0 54h1000v72H0z" fill="var(--toolbar)" />
-  <path d="M0 54h1000M0 125h1000" stroke="var(--border)" />
+  <!-- Finder window -->
+  <path
+    d="M18 0
+       H1082
+       A18 18 0 0 1 1100 18
+       V169
+       H0
+       V18
+       A18 18 0 0 1 18 0
+       Z"
+    fill="var(--chrome)"
+  />
 
+  <path
+    d="M0 54H1100V169H0Z"
+    fill="var(--toolbar)"
+  />
+
+  <path
+    d="M0 54H1100
+       M0 168H1100"
+    stroke="var(--border)"
+  />
+
+  <!-- Window controls -->
   <circle cx="28" cy="27" r="8" fill="#ff5f57" />
   <circle cx="52" cy="27" r="8" fill="#febc2e" />
   <circle cx="76" cy="27" r="8" fill="#28c840" />
-  <text x="500" y="34" text-anchor="middle" font-size="17" font-weight="600">UUKDO</text>
 
-  <rect x="24" y="70" width="210" height="34" rx="9" fill="var(--track)" stroke="var(--muted)" stroke-width="4" />
-  <rect x="238" y="79" width="11" height="16" rx="3" fill="var(--muted)" />
+  <!-- Window title -->
+  <text
+    x="550.0"
+    y="34"
+    text-anchor="middle"
+    font-size="17"
+    font-weight="600"
+  >UUKDO</text>
+
+  <!-- Battery -->
+  <rect
+    x="24"
+    y="70"
+    width="280"
+    height="34"
+    rx="9"
+    fill="var(--track)"
+    stroke="var(--muted)"
+    stroke-width="4"
+  />
+
+  <rect
+    x="308"
+    y="79"
+    width="11"
+    height="16"
+    rx="3"
+    fill="var(--muted)"
+  />
+
   <g clip-path="url(#toolbar-battery-clip)">
-    <rect x="31.00" y="77" width="60.15" height="20" fill="#3178C6" />
-    <rect x="91.15" y="77" width="45.64" height="20" fill="#663399" />
-    <rect x="136.80" y="77" width="39.28" height="20" fill="#00B4AB" />
-    <rect x="176.07" y="77" width="50.93" height="20" fill="#8B949E" />
-    <rect x="31" y="77" width="196" height="20" fill="url(#toolbar-shine)" />
+    <rect x="31.00" y="77" width="81.64" height="20" fill="#3178C6" />
+<rect x="112.64" y="77" width="61.94" height="20" fill="#663399" />
+<rect x="174.58" y="77" width="53.31" height="20" fill="#00B4AB" />
+<rect x="227.89" y="77" width="38.19" height="20" fill="#3572A5" />
+<rect x="266.08" y="77" width="16.74" height="20" fill="#F1E05A" />
+<rect x="282.82" y="77" width="14.18" height="20" fill="#8B949E" />
+
+    <rect
+      x="31"
+      y="77"
+      width="266"
+      height="20"
+      fill="url(#toolbar-shine)"
+    />
   </g>
 
-  <!-- Generated language status -->
-  <rect x="270" y="70" width="10" height="10" rx="2" fill="#3178C6" />
-  <text class="detail" x="286" y="79">TypeScript 30.69%</text>
-  <rect x="466" y="70" width="10" height="10" rx="2" fill="#663399" />
-  <text class="detail" x="482" y="79">CSS 23.29%</text>
-  <rect x="270" y="94" width="10" height="10" rx="2" fill="#00B4AB" />
-  <text class="detail" x="286" y="103">Dart 20.04%</text>
-  <rect x="466" y="94" width="10" height="10" rx="2" fill="#8B949E" />
-  <text class="detail" x="482" y="103">Other 25.98%</text>
-  <text class="meta" x="270" y="119">40,139 changed lines · 56 commits · 7 repos · 365d</text>
+  <!-- Language legend -->
+  <rect x="365" y="70" width="10" height="10" rx="2" fill="#3178C6" />
+<text class="detail" x="381" y="79">TypeScript 30.69%</text>
+<rect x="580" y="70" width="10" height="10" rx="2" fill="#663399" />
+<text class="detail" x="596" y="79">CSS 23.29%</text>
+<rect x="365" y="94" width="10" height="10" rx="2" fill="#00B4AB" />
+<text class="detail" x="381" y="103">Dart 20.04%</text>
+<rect x="580" y="94" width="10" height="10" rx="2" fill="#3572A5" />
+<text class="detail" x="596" y="103">Python 14.36%</text>
+<rect x="365" y="118" width="10" height="10" rx="2" fill="#F1E05A" />
+<text class="detail" x="381" y="127">JavaScript 6.29%</text>
+<rect x="580" y="118" width="10" height="10" rx="2" fill="#8B949E" />
+<text class="detail" x="596" y="127">Other 5.33%</text>
 
-  <rect x="746" y="70" width="232" height="34" rx="10" fill="var(--input)" stroke="var(--accent)" stroke-width="2" />
-  <circle cx="765" cy="86" r="6" fill="none" stroke="var(--text)" stroke-width="2" />
-  <path d="m770 91 5 5" fill="none" stroke="var(--text)" stroke-width="2" stroke-linecap="round" />
-  <text x="784" y="93" font-size="15">Welcome to UUKDO</text>
-  <path d="M922 79v16" stroke="var(--accent)" stroke-width="2">
-    <animate attributeName="opacity" values="1;1;0;0;1" dur="1.1s" repeatCount="indefinite" />
+  <!-- Commit statistics -->
+  <text
+    class="meta"
+    x="365"
+    y="154"
+  >40,139 changed lines · 56 commits · 7 repos · 365d</text>
+
+  <!-- Finder search -->
+  <rect
+    x="846"
+    y="70"
+    width="232"
+    height="34"
+    rx="10"
+    fill="var(--input)"
+    stroke="var(--accent)"
+    stroke-width="2"
+  />
+
+  <circle
+    cx="865"
+    cy="86"
+    r="6"
+    fill="none"
+    stroke="var(--text)"
+    stroke-width="2"
+  />
+
+  <path
+    d="m870 91 5 5"
+    fill="none"
+    stroke="var(--text)"
+    stroke-width="2"
+    stroke-linecap="round"
+  />
+
+  <g clip-path="url(#finder-search-clip)">
+    <text
+      x="884"
+      y="93"
+      font-size="15"
+    >Welcome to UUKDO</text>
+  </g>
+
+  <path
+    d="M1022 79
+       V95"
+    stroke="var(--accent)"
+    stroke-width="2"
+  >
+    <animate
+      attributeName="opacity"
+      values="1;1;0;0;1"
+      dur="1.1s"
+      repeatCount="indefinite"
+    />
   </path>
+
 </svg>
