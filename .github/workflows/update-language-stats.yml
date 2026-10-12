@@ -33,8 +33,9 @@ jobs:
         env:
           GITHUB_REPOSITORY_OWNER: ${{ github.repository_owner }}
           PROFILE_DISPLAY_NAME: UUKDO
-          # PAT must have Contents: read access to every repository to include.
-          STATS_TOKEN: ${{ secrets.GH_STATS_TOKEN }}
+          # A PAT expands access to private/org repositories; the built-in token
+          # is enough for public repositories when GH_STATS_TOKEN is not set.
+          STATS_TOKEN: ${{ secrets.GH_STATS_TOKEN || github.token }}
           COMMIT_WINDOW_DAYS: "365"
         run: python3 scripts/update_language_stats.py
 

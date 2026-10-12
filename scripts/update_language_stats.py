@@ -459,8 +459,10 @@ def main() -> int:
         print("GITHUB_REPOSITORY_OWNER is empty", file=sys.stderr)
         return 1
     if not token:
-        print("STATS_TOKEN is required to inspect commits across repositories", file=sys.stderr)
-        return 1
+        print(
+            "STATS_TOKEN is not set; continuing with public repository access",
+            file=sys.stderr,
+        )
     try:
         window_days = int(window_days_raw)
     except ValueError:
