@@ -351,42 +351,82 @@ def render_svg(
     changed_lines: int,
     window_days: int,
 ) -> str:
+    # --------------------------------------------------
     # Layout
+    # --------------------------------------------------
     svg_width = 1100
 
-    battery_x = 24
-    battery_y = 70
-    battery_width = 280
-    battery_height = 34
-
-    inner_x = battery_x + 7
-    inner_y = battery_y + 7
-    inner_width = battery_width - 14
-    inner_height = 20
-
+    # Language legend
     legend_start_x = 365
     legend_start_y = 70
     legend_col_width = 215
     legend_row_height = 24
     legend_columns = 2
 
-    search_x = 846
-    search_y = 70
-    search_width = 232
-
-    # Dynamic height
     legend_rows = (
         len(languages) + legend_columns - 1
     ) // legend_columns
 
-    legend_bottom = (
-        legend_start_y + legend_rows * legend_row_height
+    legend_height = legend_rows * legend_row_height
+    legend_bottom = legend_start_y + legend_height
+
+    # --------------------------------------------------
+    # Battery
+    # --------------------------------------------------
+    battery_x = 24
+    battery_width = 280
+    battery_height = 68
+
+    # Align battery vertically with the entire legend
+    battery_y = (
+        legend_start_y
+        + (legend_height - battery_height) / 2
     )
 
-    meta_y = max(119, legend_bottom + 12)
+    # Battery inner segments
+    inner_padding = 7
+
+    inner_x = battery_x + inner_padding
+    inner_y = battery_y + inner_padding
+
+    inner_width = battery_width - inner_padding * 2
+    inner_height = battery_height - inner_padding * 2
+
+    # Battery terminal
+    terminal_width = 11
+    terminal_height = 24
+
+    terminal_x = battery_x + battery_width + 4
+    terminal_y = (
+        battery_y
+        + (battery_height - terminal_height) / 2
+    )
+
+    # --------------------------------------------------
+    # Finder search
+    # --------------------------------------------------
+    search_x = 846
+    search_y = 70
+    search_width = 232
+    search_height = 34
+
+    # --------------------------------------------------
+    # Dynamic SVG height
+    # --------------------------------------------------
+    battery_bottom = battery_y + battery_height
+
+    content_bottom = max(
+        legend_bottom,
+        battery_bottom,
+        search_y + search_height,
+    )
+
+    meta_y = content_bottom + 18
     svg_height = max(126, meta_y + 15)
 
+    # --------------------------------------------------
     # Battery segments
+    # --------------------------------------------------
     segments = []
     cursor = inner_x
 
@@ -394,17 +434,24 @@ def render_svg(
         if index == len(languages) - 1:
             width = inner_x + inner_width - cursor
         else:
-            width = inner_width * float(language["percent"]) / 100
+            width = (
+                inner_width
+                * float(language["percent"])
+                / 100
+            )
 
         segments.append(
-            f'<rect x="{cursor:.2f}" y="{inner_y}" '
-            f'width="{max(width, 0):.2f}" height="{inner_height}" '
+            f'<rect x="{cursor:.2f}" y="{inner_y:.2f}" '
+            f'width="{max(width, 0):.2f}" '
+            f'height="{inner_height}" '
             f'fill="{language["color"]}" />'
         )
 
         cursor += width
 
+    # --------------------------------------------------
     # Language legend
+    # --------------------------------------------------
     legend = []
 
     for index, language in enumerate(languages):
@@ -418,18 +465,23 @@ def render_svg(
         value = float(language["percent"])
 
         legend.append(
-            f'<rect x="{x}" y="{y}" width="10" height="10" '
+            f'<rect x="{x}" y="{y}" '
+            f'width="10" height="10" '
             f'rx="2" fill="{language["color"]}" />'
         )
 
         legend.append(
-            f'<text class="detail" x="{x + 16}" y="{y + 9}">'
+            f'<text class="detail" '
+            f'x="{x + 16}" y="{y + 9}">'
             f'{name} {value:.2f}%</text>'
         )
 
+    # --------------------------------------------------
     # Summary
+    # --------------------------------------------------
     summary = ", ".join(
-        f'{language["name"]} {float(language["percent"]):.2f}%'
+        f'{language["name"]} '
+        f'{float(language["percent"]):.2f}%'
         for language in languages
     )
 
@@ -451,6 +503,9 @@ def render_svg(
 
     search_text = escape(f"Welcome to {display_name}")
 
+    # --------------------------------------------------
+    # SVG
+    # --------------------------------------------------
     return f'''<svg xmlns="http://www.w3.org/2000/svg"
   viewBox="0 0 {svg_width} {svg_height}"
   role="img"
@@ -502,22 +557,25 @@ def render_svg(
   </style>
 
   <defs>
+    <!-- Battery clipping -->
     <clipPath id="toolbar-battery-clip">
       <rect
         x="{inner_x}"
         y="{inner_y}"
         width="{inner_width}"
         height="{inner_height}"
-        rx="5"
+        rx="8"
       />
     </clipPath>
 
+    <!-- Battery shine -->
     <linearGradient id="toolbar-shine"
       x1="0" y1="0" x2="0" y2="1">
       <stop offset="0" stop-color="#ffffff" stop-opacity=".28" />
       <stop offset=".48" stop-color="#ffffff" stop-opacity="0" />
     </linearGradient>
 
+    <!-- Search text clipping -->
     <clipPath id="finder-search-clip">
       <rect
         x="{search_x + 36}"
@@ -528,7 +586,7 @@ def render_svg(
     </clipPath>
   </defs>
 
-  <!-- Finder window -->
+  <!-- Finder window background -->
   <path
     d="M18 0
        H{svg_width - 18}
@@ -541,11 +599,13 @@ def render_svg(
     fill="var(--chrome)"
   />
 
+  <!-- Toolbar background -->
   <path
     d="M0 54H{svg_width}V{svg_height}H0Z"
     fill="var(--toolbar)"
   />
 
+  <!-- Toolbar borders -->
   <path
     d="M0 54H{svg_width}
        M0 {svg_height - 1}H{svg_width}"
@@ -566,27 +626,29 @@ def render_svg(
     font-weight="600"
   >{safe_display_name}</text>
 
-  <!-- Battery -->
+  <!-- Battery body -->
   <rect
     x="{battery_x}"
     y="{battery_y}"
     width="{battery_width}"
     height="{battery_height}"
-    rx="9"
+    rx="12"
     fill="var(--track)"
     stroke="var(--muted)"
     stroke-width="4"
   />
 
+  <!-- Battery terminal -->
   <rect
-    x="{battery_x + battery_width + 4}"
-    y="{battery_y + 9}"
-    width="11"
-    height="16"
+    x="{terminal_x}"
+    y="{terminal_y}"
+    width="{terminal_width}"
+    height="{terminal_height}"
     rx="3"
     fill="var(--muted)"
   />
 
+  <!-- Battery language segments -->
   <g clip-path="url(#toolbar-battery-clip)">
     {chr(10).join(segments)}
 
@@ -609,18 +671,19 @@ def render_svg(
     y="{meta_y}"
   >{safe_meta}</text>
 
-  <!-- Finder search -->
+  <!-- Finder search field -->
   <rect
     x="{search_x}"
     y="{search_y}"
     width="{search_width}"
-    height="34"
+    height="{search_height}"
     rx="10"
     fill="var(--input)"
     stroke="var(--accent)"
     stroke-width="2"
   />
 
+  <!-- Search icon -->
   <circle
     cx="{search_x + 19}"
     cy="{search_y + 16}"
@@ -638,6 +701,7 @@ def render_svg(
     stroke-linecap="round"
   />
 
+  <!-- Search text -->
   <g clip-path="url(#finder-search-clip)">
     <text
       x="{search_x + 38}"
@@ -646,6 +710,7 @@ def render_svg(
     >{search_text}</text>
   </g>
 
+  <!-- Blinking cursor -->
   <path
     d="M{search_x + search_width - 56} {search_y + 9}
        V{search_y + 25}"
