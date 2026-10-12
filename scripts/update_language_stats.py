@@ -312,22 +312,34 @@ def summarized_languages(totals: Counter[str]) -> list[dict[str, object]]:
         raise RuntimeError("No source-code changes were found in the selected commit window")
 
     ordered = totals.most_common()
-    if len(ordered) <= 4:
-        groups = ordered
-    else:
-        visible = ordered[:3]
-        groups = visible + [("Other", sum(value for _, value in ordered[3:]))]
+
+    visible = []
+    other_total = 0
+
+    for language, change_count in ordered:
+        percent = change_count / grand_total * 100
+
+        if percent >= 5:
+            visible.append((language, change_count))
+        else:
+            other_total += change_count
+
+    if other_total > 0:
+        visible.append(("Other", other_total))
 
     result = []
-    for language, change_count in groups:
-        result.append(
-            {
-                "name": language,
-                "changes": change_count,
-                "percent": change_count / grand_total * 100,
-                "color": "#8B949E" if language == "Other" else LANGUAGE_COLORS.get(language, "#8B949E"),
-            }
-        )
+    for language, change_count in visible:
+        result.append({
+            "name": language,
+            "changes": change_count,
+            "percent": change_count / grand_total * 100,
+            "color": (
+                "#8B949E"
+                if language == "Other"
+                else LANGUAGE_COLORS.get(language, "#8B949E")
+            ),
+        })
+
     return result
 
 
@@ -339,47 +351,114 @@ def render_svg(
     changed_lines: int,
     window_days: int,
 ) -> str:
-    inner_x = 31.0
-    inner_width = 196.0
+    # Layout
+    svg_width = 1100
+
+    battery_x = 24
+    battery_y = 70
+    battery_width = 280
+    battery_height = 34
+
+    inner_x = battery_x + 7
+    inner_y = battery_y + 7
+    inner_width = battery_width - 14
+    inner_height = 20
+
+    legend_start_x = 365
+    legend_start_y = 70
+    legend_col_width = 215
+    legend_row_height = 24
+    legend_columns = 2
+
+    search_x = 846
+    search_y = 70
+    search_width = 232
+
+    # Dynamic height
+    legend_rows = (
+        len(languages) + legend_columns - 1
+    ) // legend_columns
+
+    legend_bottom = (
+        legend_start_y + legend_rows * legend_row_height
+    )
+
+    meta_y = max(119, legend_bottom + 12)
+    svg_height = max(126, meta_y + 15)
+
+    # Battery segments
     segments = []
     cursor = inner_x
+
     for index, language in enumerate(languages):
         if index == len(languages) - 1:
             width = inner_x + inner_width - cursor
         else:
             width = inner_width * float(language["percent"]) / 100
+
         segments.append(
-            f'    <rect x="{cursor:.2f}" y="77" width="{max(width, 0):.2f}" height="20" '
+            f'<rect x="{cursor:.2f}" y="{inner_y}" '
+            f'width="{max(width, 0):.2f}" height="{inner_height}" '
             f'fill="{language["color"]}" />'
         )
+
         cursor += width
 
-    legend_positions = [(270, 70), (466, 70), (270, 94), (466, 94)]
+    # Language legend
     legend = []
-    for index, language in enumerate(languages[:4]):
-        x, y = legend_positions[index]
+
+    for index, language in enumerate(languages):
+        col = index % legend_columns
+        row = index // legend_columns
+
+        x = legend_start_x + col * legend_col_width
+        y = legend_start_y + row * legend_row_height
+
         name = escape(str(language["name"]))
         value = float(language["percent"])
-        legend.append(f'  <rect x="{x}" y="{y}" width="10" height="10" rx="2" fill="{language["color"]}" />')
-        legend.append(f'  <text class="detail" x="{x + 16}" y="{y + 9}">{name} {value:.2f}%</text>')
 
+        legend.append(
+            f'<rect x="{x}" y="{y}" width="10" height="10" '
+            f'rx="2" fill="{language["color"]}" />'
+        )
+
+        legend.append(
+            f'<text class="detail" x="{x + 16}" y="{y + 9}">'
+            f'{name} {value:.2f}%</text>'
+        )
+
+    # Summary
     summary = ", ".join(
-        f'{language["name"]} {float(language["percent"]):.2f}%' for language in languages
+        f'{language["name"]} {float(language["percent"]):.2f}%'
+        for language in languages
     )
+
     safe_display_name = escape(display_name)
+
     safe_desc = escape(
-        f"Language usage from {changed_lines:,} changed source lines in {commit_count} "
-        f"non-merge commits across {repository_count} repositories during the last "
+        f"Language usage from {changed_lines:,} changed source lines "
+        f"in {commit_count} non-merge commits across "
+        f"{repository_count} repositories during the last "
         f"{window_days} days. {summary}."
     )
+
     safe_meta = escape(
-        f"{changed_lines:,} changed lines · {commit_count} commits · "
-        f"{repository_count} repos · {window_days}d"
+        f"{changed_lines:,} changed lines · "
+        f"{commit_count} commits · "
+        f"{repository_count} repos · "
+        f"{window_days}d"
     )
 
-    return f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 126" role="img" aria-labelledby="title desc">
+    search_text = escape(f"Welcome to {display_name}")
+
+    return f'''<svg xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 {svg_width} {svg_height}"
+  role="img"
+  aria-labelledby="title desc">
+
   <title id="title">{safe_display_name} Finder window header with live language battery</title>
   <desc id="desc">{safe_desc}</desc>
+
   <style>
     :root {{
       --chrome: #f2f2f4;
@@ -391,6 +470,7 @@ def render_svg(
       --muted: #6e6e73;
       --accent: #0969da;
     }}
+
     @media (prefers-color-scheme: dark) {{
       :root {{
         --chrome: #2b2b2d;
@@ -403,48 +483,183 @@ def render_svg(
         --accent: #76f7ef;
       }}
     }}
-    text {{ font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", sans-serif; fill: var(--text); }}
-    .detail {{ font-size: 12px; fill: var(--muted); }}
-    .meta {{ font-size: 10px; fill: var(--muted); }}
+
+    text {{
+      font-family: -apple-system, BlinkMacSystemFont,
+        "SF Pro Display", "Segoe UI", sans-serif;
+      fill: var(--text);
+    }}
+
+    .detail {{
+      font-size: 12px;
+      fill: var(--muted);
+    }}
+
+    .meta {{
+      font-size: 10px;
+      fill: var(--muted);
+    }}
   </style>
 
   <defs>
     <clipPath id="toolbar-battery-clip">
-      <rect x="31" y="77" width="196" height="20" rx="5" />
+      <rect
+        x="{inner_x}"
+        y="{inner_y}"
+        width="{inner_width}"
+        height="{inner_height}"
+        rx="5"
+      />
     </clipPath>
-    <linearGradient id="toolbar-shine" x1="0" y1="0" x2="0" y2="1">
+
+    <linearGradient id="toolbar-shine"
+      x1="0" y1="0" x2="0" y2="1">
       <stop offset="0" stop-color="#ffffff" stop-opacity=".28" />
       <stop offset=".48" stop-color="#ffffff" stop-opacity="0" />
     </linearGradient>
+
+    <clipPath id="finder-search-clip">
+      <rect
+        x="{search_x + 36}"
+        y="{search_y + 3}"
+        width="{search_width - 58}"
+        height="28"
+      />
+    </clipPath>
   </defs>
 
-  <path d="M18 0h964a18 18 0 0 1 18 18v108H0V18A18 18 0 0 1 18 0z" fill="var(--chrome)" />
-  <path d="M0 54h1000v72H0z" fill="var(--toolbar)" />
-  <path d="M0 54h1000M0 125h1000" stroke="var(--border)" />
+  <!-- Finder window -->
+  <path
+    d="M18 0
+       H{svg_width - 18}
+       A18 18 0 0 1 {svg_width} 18
+       V{svg_height}
+       H0
+       V18
+       A18 18 0 0 1 18 0
+       Z"
+    fill="var(--chrome)"
+  />
 
+  <path
+    d="M0 54H{svg_width}V{svg_height}H0Z"
+    fill="var(--toolbar)"
+  />
+
+  <path
+    d="M0 54H{svg_width}
+       M0 {svg_height - 1}H{svg_width}"
+    stroke="var(--border)"
+  />
+
+  <!-- Window controls -->
   <circle cx="28" cy="27" r="8" fill="#ff5f57" />
   <circle cx="52" cy="27" r="8" fill="#febc2e" />
   <circle cx="76" cy="27" r="8" fill="#28c840" />
-  <text x="500" y="34" text-anchor="middle" font-size="17" font-weight="600">{safe_display_name}</text>
 
-  <rect x="24" y="70" width="210" height="34" rx="9" fill="var(--track)" stroke="var(--muted)" stroke-width="4" />
-  <rect x="238" y="79" width="11" height="16" rx="3" fill="var(--muted)" />
+  <!-- Window title -->
+  <text
+    x="{svg_width / 2}"
+    y="34"
+    text-anchor="middle"
+    font-size="17"
+    font-weight="600"
+  >{safe_display_name}</text>
+
+  <!-- Battery -->
+  <rect
+    x="{battery_x}"
+    y="{battery_y}"
+    width="{battery_width}"
+    height="{battery_height}"
+    rx="9"
+    fill="var(--track)"
+    stroke="var(--muted)"
+    stroke-width="4"
+  />
+
+  <rect
+    x="{battery_x + battery_width + 4}"
+    y="{battery_y + 9}"
+    width="11"
+    height="16"
+    rx="3"
+    fill="var(--muted)"
+  />
+
   <g clip-path="url(#toolbar-battery-clip)">
-{chr(10).join(segments)}
-    <rect x="31" y="77" width="196" height="20" fill="url(#toolbar-shine)" />
+    {chr(10).join(segments)}
+
+    <rect
+      x="{inner_x}"
+      y="{inner_y}"
+      width="{inner_width}"
+      height="{inner_height}"
+      fill="url(#toolbar-shine)"
+    />
   </g>
 
-  <!-- Generated language status -->
-{chr(10).join(legend)}
-  <text class="meta" x="270" y="119">{safe_meta}</text>
+  <!-- Language legend -->
+  {chr(10).join(legend)}
 
-  <rect x="746" y="70" width="232" height="34" rx="10" fill="var(--input)" stroke="var(--accent)" stroke-width="2" />
-  <circle cx="765" cy="86" r="6" fill="none" stroke="var(--text)" stroke-width="2" />
-  <path d="m770 91 5 5" fill="none" stroke="var(--text)" stroke-width="2" stroke-linecap="round" />
-  <text x="784" y="93" font-size="15">Welcome to {safe_display_name}</text>
-  <path d="M922 79v16" stroke="var(--accent)" stroke-width="2">
-    <animate attributeName="opacity" values="1;1;0;0;1" dur="1.1s" repeatCount="indefinite" />
+  <!-- Commit statistics -->
+  <text
+    class="meta"
+    x="{legend_start_x}"
+    y="{meta_y}"
+  >{safe_meta}</text>
+
+  <!-- Finder search -->
+  <rect
+    x="{search_x}"
+    y="{search_y}"
+    width="{search_width}"
+    height="34"
+    rx="10"
+    fill="var(--input)"
+    stroke="var(--accent)"
+    stroke-width="2"
+  />
+
+  <circle
+    cx="{search_x + 19}"
+    cy="{search_y + 16}"
+    r="6"
+    fill="none"
+    stroke="var(--text)"
+    stroke-width="2"
+  />
+
+  <path
+    d="m{search_x + 24} {search_y + 21} 5 5"
+    fill="none"
+    stroke="var(--text)"
+    stroke-width="2"
+    stroke-linecap="round"
+  />
+
+  <g clip-path="url(#finder-search-clip)">
+    <text
+      x="{search_x + 38}"
+      y="{search_y + 23}"
+      font-size="15"
+    >{search_text}</text>
+  </g>
+
+  <path
+    d="M{search_x + search_width - 56} {search_y + 9}
+       V{search_y + 25}"
+    stroke="var(--accent)"
+    stroke-width="2"
+  >
+    <animate
+      attributeName="opacity"
+      values="1;1;0;0;1"
+      dur="1.1s"
+      repeatCount="indefinite"
+    />
   </path>
+
 </svg>
 '''
 
