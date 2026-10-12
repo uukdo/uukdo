@@ -1,10 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg"
-  viewBox="0 0 1100 169"
+  viewBox="0 0 1100 175"
   role="img"
   aria-labelledby="title desc">
 
   <title id="title">UUKDO Finder window header with live language battery</title>
-  <desc id="desc">Language usage from 40,139 changed source lines in 56 non-merge commits across 7 repositories during the last 365 days. TypeScript 30.69%, CSS 23.29%, Dart 20.04%, Python 14.36%, JavaScript 6.29%, Other 5.33%.</desc>
+  <desc id="desc">Language usage from 40,456 changed source lines in 57 non-merge commits across 7 repositories during the last 365 days. TypeScript 30.45%, CSS 23.10%, Dart 19.88%, Python 15.03%, JavaScript 6.24%, Other 5.29%.</desc>
 
   <style>
     :root {
@@ -49,22 +49,25 @@
   </style>
 
   <defs>
+    <!-- Battery clipping -->
     <clipPath id="toolbar-battery-clip">
       <rect
         x="31"
-        y="77"
+        y="79.0"
         width="266"
-        height="20"
-        rx="5"
+        height="54"
+        rx="8"
       />
     </clipPath>
 
+    <!-- Battery shine -->
     <linearGradient id="toolbar-shine"
       x1="0" y1="0" x2="0" y2="1">
       <stop offset="0" stop-color="#ffffff" stop-opacity=".28" />
       <stop offset=".48" stop-color="#ffffff" stop-opacity="0" />
     </linearGradient>
 
+    <!-- Search text clipping -->
     <clipPath id="finder-search-clip">
       <rect
         x="882"
@@ -75,12 +78,12 @@
     </clipPath>
   </defs>
 
-  <!-- Finder window -->
+  <!-- Finder window background -->
   <path
     d="M18 0
        H1082
        A18 18 0 0 1 1100 18
-       V169
+       V175
        H0
        V18
        A18 18 0 0 1 18 0
@@ -88,14 +91,16 @@
     fill="var(--chrome)"
   />
 
+  <!-- Toolbar background -->
   <path
-    d="M0 54H1100V169H0Z"
+    d="M0 54H1100V175H0Z"
     fill="var(--toolbar)"
   />
 
+  <!-- Toolbar borders -->
   <path
     d="M0 54H1100
-       M0 168H1100"
+       M0 174H1100"
     stroke="var(--border)"
   />
 
@@ -113,66 +118,68 @@
     font-weight="600"
   >UUKDO</text>
 
-  <!-- Battery -->
+  <!-- Battery body -->
   <rect
     x="24"
-    y="70"
+    y="72.0"
     width="280"
-    height="34"
-    rx="9"
+    height="68"
+    rx="12"
     fill="var(--track)"
     stroke="var(--muted)"
     stroke-width="4"
   />
 
+  <!-- Battery terminal -->
   <rect
     x="308"
-    y="79"
+    y="94.0"
     width="11"
-    height="16"
+    height="24"
     rx="3"
     fill="var(--muted)"
   />
 
+  <!-- Battery language segments -->
   <g clip-path="url(#toolbar-battery-clip)">
-    <rect x="31.00" y="77" width="81.64" height="20" fill="#3178C6" />
-<rect x="112.64" y="77" width="61.94" height="20" fill="#663399" />
-<rect x="174.58" y="77" width="53.31" height="20" fill="#00B4AB" />
-<rect x="227.89" y="77" width="38.19" height="20" fill="#3572A5" />
-<rect x="266.08" y="77" width="16.74" height="20" fill="#F1E05A" />
-<rect x="282.82" y="77" width="14.18" height="20" fill="#8B949E" />
+    <rect x="31.00" y="79.00" width="81.00" height="54" fill="#3178C6" />
+<rect x="112.00" y="79.00" width="61.46" height="54" fill="#663399" />
+<rect x="173.45" y="79.00" width="52.89" height="54" fill="#00B4AB" />
+<rect x="226.34" y="79.00" width="39.98" height="54" fill="#3572A5" />
+<rect x="266.32" y="79.00" width="16.61" height="54" fill="#F1E05A" />
+<rect x="282.93" y="79.00" width="14.07" height="54" fill="#8B949E" />
 
     <rect
       x="31"
-      y="77"
+      y="79.0"
       width="266"
-      height="20"
+      height="54"
       fill="url(#toolbar-shine)"
     />
   </g>
 
   <!-- Language legend -->
   <rect x="365" y="70" width="10" height="10" rx="2" fill="#3178C6" />
-<text class="detail" x="381" y="79">TypeScript 30.69%</text>
+<text class="detail" x="381" y="79">TypeScript 30.45%</text>
 <rect x="580" y="70" width="10" height="10" rx="2" fill="#663399" />
-<text class="detail" x="596" y="79">CSS 23.29%</text>
+<text class="detail" x="596" y="79">CSS 23.10%</text>
 <rect x="365" y="94" width="10" height="10" rx="2" fill="#00B4AB" />
-<text class="detail" x="381" y="103">Dart 20.04%</text>
+<text class="detail" x="381" y="103">Dart 19.88%</text>
 <rect x="580" y="94" width="10" height="10" rx="2" fill="#3572A5" />
-<text class="detail" x="596" y="103">Python 14.36%</text>
+<text class="detail" x="596" y="103">Python 15.03%</text>
 <rect x="365" y="118" width="10" height="10" rx="2" fill="#F1E05A" />
-<text class="detail" x="381" y="127">JavaScript 6.29%</text>
+<text class="detail" x="381" y="127">JavaScript 6.24%</text>
 <rect x="580" y="118" width="10" height="10" rx="2" fill="#8B949E" />
-<text class="detail" x="596" y="127">Other 5.33%</text>
+<text class="detail" x="596" y="127">Other 5.29%</text>
 
   <!-- Commit statistics -->
   <text
     class="meta"
     x="365"
-    y="154"
-  >40,139 changed lines · 56 commits · 7 repos · 365d</text>
+    y="160"
+  >40,456 changed lines · 57 commits · 7 repos · 365d</text>
 
-  <!-- Finder search -->
+  <!-- Finder search field -->
   <rect
     x="846"
     y="70"
@@ -184,6 +191,7 @@
     stroke-width="2"
   />
 
+  <!-- Search icon -->
   <circle
     cx="865"
     cy="86"
@@ -201,6 +209,7 @@
     stroke-linecap="round"
   />
 
+  <!-- Search text -->
   <g clip-path="url(#finder-search-clip)">
     <text
       x="884"
@@ -209,6 +218,7 @@
     >Welcome to UUKDO</text>
   </g>
 
+  <!-- Blinking cursor -->
   <path
     d="M1022 79
        V95"
