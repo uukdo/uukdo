@@ -4,7 +4,7 @@
   aria-labelledby="title desc">
 
   <title id="title">UUKDO Finder window header with live language battery</title>
-  <desc id="desc">Language usage from 49,491 changed source lines in 108 non-merge commits across 8 repositories during the last 365 days. TypeScript 34.85%, CSS 21.40%, Dart 16.25%, Python 12.80%, JavaScript 5.36%, Other 9.32%.</desc>
+  <desc id="desc">Language usage from 50,395 changed source lines in 118 non-merge commits across 8 repositories during the last 365 days. TypeScript 35.62%, CSS 21.41%, Dart 15.96%, Python 12.57%, JavaScript 5.27%, Other 9.16%.</desc>
 
   <style>
     :root {
@@ -142,12 +142,12 @@
 
   <!-- Battery language segments -->
   <g clip-path="url(#toolbar-battery-clip)">
-    <rect x="31.00" y="79.00" width="92.71" height="54" fill="#3178C6" />
-<rect x="123.71" y="79.00" width="56.93" height="54" fill="#663399" />
-<rect x="180.64" y="79.00" width="43.23" height="54" fill="#00B4AB" />
-<rect x="223.87" y="79.00" width="34.05" height="54" fill="#3572A5" />
-<rect x="257.93" y="79.00" width="14.27" height="54" fill="#F1E05A" />
-<rect x="272.20" y="79.00" width="24.80" height="54" fill="#8B949E" />
+    <rect x="31.00" y="79.00" width="94.76" height="54" fill="#3178C6" />
+<rect x="125.76" y="79.00" width="56.96" height="54" fill="#663399" />
+<rect x="182.72" y="79.00" width="42.46" height="54" fill="#00B4AB" />
+<rect x="225.18" y="79.00" width="33.44" height="54" fill="#3572A5" />
+<rect x="258.63" y="79.00" width="14.01" height="54" fill="#F1E05A" />
+<rect x="272.64" y="79.00" width="24.36" height="54" fill="#8B949E" />
 
     <rect
       x="31"
@@ -160,24 +160,24 @@
 
   <!-- Language legend -->
   <rect x="365" y="70" width="10" height="10" rx="2" fill="#3178C6" />
-<text class="detail" x="381" y="79">TypeScript 34.85%</text>
+<text class="detail" x="381" y="79">TypeScript 35.62%</text>
 <rect x="580" y="70" width="10" height="10" rx="2" fill="#663399" />
-<text class="detail" x="596" y="79">CSS 21.40%</text>
+<text class="detail" x="596" y="79">CSS 21.41%</text>
 <rect x="365" y="94" width="10" height="10" rx="2" fill="#00B4AB" />
-<text class="detail" x="381" y="103">Dart 16.25%</text>
+<text class="detail" x="381" y="103">Dart 15.96%</text>
 <rect x="580" y="94" width="10" height="10" rx="2" fill="#3572A5" />
-<text class="detail" x="596" y="103">Python 12.80%</text>
+<text class="detail" x="596" y="103">Python 12.57%</text>
 <rect x="365" y="118" width="10" height="10" rx="2" fill="#F1E05A" />
-<text class="detail" x="381" y="127">JavaScript 5.36%</text>
+<text class="detail" x="381" y="127">JavaScript 5.27%</text>
 <rect x="580" y="118" width="10" height="10" rx="2" fill="#8B949E" />
-<text class="detail" x="596" y="127">Other 9.32%</text>
+<text class="detail" x="596" y="127">Other 9.16%</text>
 
   <!-- Commit statistics -->
   <text
     class="meta"
     x="365"
     y="160"
-  >49,491 changed lines · 108 commits · 8 repos · 365d</text>
+  >50,395 changed lines · 118 commits · 8 repos · 365d</text>
 
   <!-- Finder search field -->
   <rect
